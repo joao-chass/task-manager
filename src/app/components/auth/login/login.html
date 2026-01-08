@@ -1,0 +1,112 @@
+<div class="container mt-5">
+    <div class="row justify-content-center">
+      <div class="col-md-6 col-lg-5">
+        <div class="card shadow-lg border-0">
+          <div class="card-header bg-primary text-white text-center py-4">
+            <h3 class="mb-0">
+              <fa-icon [icon]="faUser" class="me-2"></fa-icon>
+              Bem-vindo ao Gerenciador de Tarefas
+            </h3>
+            <p class="mb-0 mt-2 opacity-75">Faça login para continuar</p>
+          </div>
+          
+          <div class="card-body p-4 p-md-5">
+            <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" novalidate>
+              <div class="mb-4">
+                <label for="email" class="form-label fw-bold">
+                  Email
+                </label>
+                <div class="input-group">
+                  <span class="input-group-text">
+                    <fa-icon 
+                    [icon]="faEnvelope" class="me-1"></fa-icon>
+                  </span>
+                  <input type="email" 
+                         class="form-control" 
+                         id="email"
+                         formControlName="email"
+                         placeholder="seu@email.com"
+                         [class.is-invalid]="loginForm.get('email')?.invalid && loginForm.get('email')?.touched">
+                </div>
+                @if (loginForm.get('email')?.invalid && loginForm.get('email')?.touched) {
+                  <div class="invalid-feedback d-block">
+                    @if (loginForm.get('email')?.errors?.['required']) {
+                      <span>Email é obrigatório</span>
+                    }
+                    @if (loginForm.get('email')?.errors?.['email']) {
+                      <span>Digite um email válido</span>
+                    }
+                  </div>
+                }
+              </div>
+  
+              <div class="mb-4">
+                <label for="password" class="form-label fw-bold">
+                  Senha
+                </label>
+                <div class="input-group">
+                  <span class="input-group-text">
+                    <fa-icon [icon]="faLock" class="me-1"></fa-icon>
+                  </span>
+                  <input type="password" 
+                         class="form-control" 
+                         id="password"
+                         formControlName="password"
+                         placeholder="Sua senha"
+                         [class.is-invalid]="loginForm.get('password')?.invalid && loginForm.get('password')?.touched">
+                </div>
+                @if (loginForm.get('password')?.invalid && loginForm.get('password')?.touched) {
+                  <div class="invalid-feedback d-block">
+                    @if (loginForm.get('password')?.errors?.['required']) {
+                      <span>Senha é obrigatória</span>
+                    }
+                    @if (loginForm.get('password')?.errors?.['minlength']) {
+                      <span>Senha deve ter no mínimo 3 caracteres</span>
+                    }
+                  </div>
+                }
+              </div>
+  
+             
+              <div class="d-grid mb-4">
+                <button type="submit" 
+                        class="btn btn-primary btn-lg"
+                        [disabled]="loginForm.invalid || loading">
+                        @if(loading) {
+
+                          <span class="spinner-border spinner-border-sm me-2" role="status"></span>
+                        }
+                  Entrar
+                </button>
+              </div>
+  
+              
+              @if(errorMessage) {
+                <div class="alert alert-danger" role="alert">
+                  <i class="bi bi-exclamation-triangle me-2"></i>
+                  {{ errorMessage }}
+                </div>
+              }
+  
+            
+              <div class="text-center mb-4">
+                <hr class="my-4">
+                <span class="text-muted">OU</span>
+              </div>
+  
+          
+              <div class="text-center">
+                <p class="text-muted">
+                  Não tem uma conta?
+                  <a routerLink="/register" class="text-decoration-none fw-bold">
+                    Cadastre-se aqui
+                  </a>
+                </p>
+              </div>
+            </form>
+          </div>
+        </div>
+  
+      </div>
+    </div>
+  </div>
