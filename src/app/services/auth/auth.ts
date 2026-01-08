@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, catchError, map, Observable, of } from 'rxjs';
+import { BehaviorSubject, catchError, map, Observable, of, switchMap, tap, throwError } from 'rxjs';
 import { User } from '../../models/user.model';
 import { HttpClient } from '@angular/common/http';
 
@@ -35,15 +35,41 @@ export class Auth {
   }
 
   register(user: User): Observable<User> {
-    return this.http.post<User>(this.apiUrl, user)
-      .pipe(
-        map(newUser => {
-          localStorage.setItem('currentUser', JSON.stringify(newUser));
-          this.currentUserSubject.next(newUser);
-          return newUser;
-        })
-      );
+    return this.http.get<User[]>(`${this.apiUrl}?email=${user.email}`).pipe(
+      map(existingUsers => {
+     
+        if (existingUsers.length > 0) {
+          throw { status: 409, message: 'Email já cadastrado' };
+        }
+        return user;
+      }),
+    
+      switchMap(() => this.http.post<User>(this.apiUrl, {
+        ...user,
+        id: Date.now(), 
+        createdAt: new Date().toISOString()
+      })),
+      tap(newUser => {
+     
+        localStorage.setItem('currentUser', JSON.stringify(newUser));
+        this.currentUserSubject.next(newUser);
+      }),
+      catchError(error => {
+        console.error('Registration error:', error);
+        if (error.status === 409) {
+          return throwError(() => ({ 
+            status: 409, 
+            message: 'Este email já está cadastrado' 
+          }));
+        }
+        return throwError(() => ({ 
+          status: 500, 
+          message: 'Erro ao criar conta. Tente novamente.' 
+        }));
+      })
+    );
   }
+
 
   logout(): void {
     localStorage.removeItem('currentUser');

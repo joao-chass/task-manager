@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Auth } from '../../../services/auth/auth';
@@ -12,6 +12,7 @@ import {
   faEyeSlash,
   faSignInAlt
 } from '@fortawesome/free-solid-svg-icons';
+import { CommonModule } from '@angular/common';
 
 
 @Component({
@@ -19,6 +20,9 @@ import {
   imports: [
     ReactiveFormsModule, 
     FormsModule,
+    FaIconComponent,
+    CommonModule,
+    ReactiveFormsModule,
     FaIconComponent
   ],
   templateUrl: './login.html',
@@ -26,9 +30,12 @@ import {
   standalone: true,
 })
 export class Login {
+  
   loginForm: FormGroup;
-  errorMessage = '';
-  loading = false;
+
+  loading = signal(false);
+  errorMessage = signal('');
+  
 
   faUser = faUser;
   faEnvelope = faEnvelope;
@@ -49,22 +56,37 @@ export class Login {
     });
   }
 
+  rigisterRoute() {
+    this.router.navigate(['/register']);
+  }
+
   onSubmit(): void {
     if (this.loginForm.valid) {
-      const { email, password } = this.loginForm.value;
+      this.loading.set(true);
+      
+      setTimeout(() => {
+ 
+      this.loading.set(false);
+        
+     
+        const { email, password } = this.loginForm.value;
       
       this.authService.login(email, password).subscribe({
         next: (user) => {
           if (user) {
             this.router.navigate(['/tasks']);
           } else {
-            this.errorMessage = 'Credenciais inválidas';
+            this.errorMessage.set('Credenciais inválidas');
           }
         },
         error: () => {
-          this.errorMessage = 'Erro ao fazer login';
+
+          this.errorMessage.set('Erro ao fazer login');
         }
       });
+        
+      }, 500);
+      
     }
   }
 }

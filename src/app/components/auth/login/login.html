@@ -10,6 +10,7 @@
             <p class="mb-0 mt-2 opacity-75">Faça login para continuar</p>
           </div>
           
+   
           <div class="card-body p-4 p-md-5">
             <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" novalidate>
               <div class="mb-4">
@@ -71,8 +72,8 @@
               <div class="d-grid mb-4">
                 <button type="submit" 
                         class="btn btn-primary btn-lg"
-                        [disabled]="loginForm.invalid || loading">
-                        @if(loading) {
+                        [disabled]="loginForm.invalid || loading()">
+                        @if(loading()) {
 
                           <span class="spinner-border spinner-border-sm me-2" role="status"></span>
                         }
@@ -81,10 +82,10 @@
               </div>
   
               
-              @if(errorMessage) {
+              @if(errorMessage()) {
                 <div class="alert alert-danger" role="alert">
                   <i class="bi bi-exclamation-triangle me-2"></i>
-                  {{ errorMessage }}
+                  {{ errorMessage() }}
                 </div>
               }
   
@@ -95,16 +96,23 @@
               </div>
   
           
-              <div class="text-center">
-                <p class="text-muted">
-                  Não tem uma conta?
-                  <a routerLink="/register" class="text-decoration-none fw-bold">
-                    Cadastre-se aqui
-                  </a>
-                </p>
-              </div>
+             
             </form>
+            <div class="text-center">
+              <p class="text-muted" >
+                Não tem uma conta?
+                <a (click)="rigisterRoute()" style="cursor: pointer; z-index: 999;" class="text-decoration-none fw-bold">
+                  Cadastre-se aqui
+                </a>
+
+             
+              </p>
+            </div>
           </div>
+     
+
+         
+          
         </div>
   
       </div>
