@@ -6,69 +6,6 @@
       "email": "teste@email.com",
       "password": "teste123",
       "createdAt": "2024-01-15T10:00:00.000Z"
-    },
-    {
-      "id": "49cb",
-      "name": "Joao Carlos Borges Chagas",
-      "email": "joaoborges07@hotmail.com",
-      "password": "@Skateof51",
-      "createdAt": "2026-01-08T18:18:42.617Z"
-    },
-    {
-      "id": "f298",
-      "name": "Joao Carlos Borges Chagas",
-      "email": "teste@email.com",
-      "password": "@Skateof51",
-      "createdAt": "2026-01-08T18:19:17.903Z"
-    },
-    {
-      "id": "1767897025689",
-      "name": "Joao Carlos Borges Chagas",
-      "email": "testes@email.com",
-      "password": "@Skasteof51",
-      "createdAt": "2026-01-08T18:30:25.689Z"
-    },
-    {
-      "id": 1767899303945,
-      "name": "Joao Carlos Borges Chagas",
-      "email": "teste1s@email.com",
-      "password": "@Skasteof51",
-      "createdAt": "2026-01-08T19:08:23.945Z"
-    },
-    {
-      "id": 1767899380185,
-      "name": "Joao Carlos Borges Chagas",
-      "email": "testses@email.com",
-      "password": "@Skasteof51",
-      "createdAt": "2026-01-08T19:09:40.185Z"
-    },
-    {
-      "id": 1767900804815,
-      "name": "Joao Carlos Borges Chagas",
-      "email": "testsess@email.com",
-      "password": "@Skateof51",
-      "createdAt": "2026-01-08T19:33:24.815Z"
-    },
-    {
-      "id": 1767900871903,
-      "name": "Joao Carlos Borges Chagas",
-      "email": "tesdtsess@email.com",
-      "password": "@Skasteof51",
-      "createdAt": "2026-01-08T19:34:31.903Z"
-    },
-    {
-      "id": 1767900950079,
-      "name": "Joao Carlos Borges Chagas",
-      "email": "tesdtsddess@email.com",
-      "password": "@Skasteof51",
-      "createdAt": "2026-01-08T19:35:50.079Z"
-    },
-    {
-      "id": 1767900997032,
-      "name": "Joao Carlos Borgses Chagas",
-      "email": "tesdtsdsdess@email.com",
-      "password": "@Skasteof51",
-      "createdAt": "2026-01-08T19:36:37.032Z"
     }
   ],
   "tasks": []
