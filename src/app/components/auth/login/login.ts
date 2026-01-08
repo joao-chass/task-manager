@@ -74,7 +74,7 @@ export class Login {
       this.authService.login(email, password).subscribe({
         next: (user) => {
           if (user) {
-            this.router.navigate(['/tasks']);
+            this.router.navigate(['/task']);
           } else {
             this.errorMessage.set('Credenciais inválidas');
           }

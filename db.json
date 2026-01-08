@@ -2,7 +2,7 @@
   "users": [
     {
       "id": "1",
-      "name": "Usuário Demo",
+      "name": "Usuário teste",
       "email": "teste@email.com",
       "password": "teste123",
       "createdAt": "2024-01-15T10:00:00.000Z"

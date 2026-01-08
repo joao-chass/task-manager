@@ -70,6 +70,10 @@ export class Auth {
     );
   }
 
+  getCurrentUser(): User | null {
+    return this.currentUserSubject.value;
+  }
+
 
   logout(): void {
     localStorage.removeItem('currentUser');

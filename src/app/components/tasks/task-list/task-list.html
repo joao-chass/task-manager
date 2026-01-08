@@ -1,0 +1,357 @@
+<div class="container-fluid py-4">
+    <!-- Cabeçalho -->
+    <div class="row mb-4">
+      <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center">
+          <div>
+            <h1 class="h2 mb-1">
+              <fa-icon [icon]="faTasks" class="text-primary me-2"></fa-icon>
+              Minhas Tarefas
+            </h1>
+            <p class="text-muted mb-0">Bem-vindo, {{ userName() }}!</p>
+          </div>
+          <div class="d-flex gap-2">
+            <button class="btn btn-primary" (click)="goToCreateTask()">
+              <fa-icon [icon]="faPlus" class="me-2"></fa-icon>
+              Nova Tarefa
+            </button>
+            <button class="btn btn-outline-danger" (click)="logout()">
+              <fa-icon [icon]="faSignOutAlt" class="me-2"></fa-icon>
+              Sair
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+    <!-- Estatísticas -->
+    <div class="row mb-4">
+      <div class="col-md-3">
+        <div class="card border-0 shadow-sm">
+          <div class="card-body text-center">
+            <h5 class="card-title text-primary">{{ totalTasks() }}</h5>
+            <p class="card-text text-muted">Total de Tarefas</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="card border-0 shadow-sm">
+          <div class="card-body text-center">
+            <h5 class="card-title text-success">{{ completedTasks() }}</h5>
+            <p class="card-text text-muted">Concluídas</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="card border-0 shadow-sm">
+          <div class="card-body text-center">
+            <h5 class="card-title text-warning">{{ pendingTasks() }}</h5>
+            <p class="card-text text-muted">Pendentes</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="card border-0 shadow-sm">
+          <div class="card-body text-center">
+            <h5 class="card-title">{{ totalTasks() > 0 ? Math.round((completedTasks() / totalTasks()) * 100) : 0 }}%</h5>
+            <p class="card-text text-muted">Taxa de Conclusão</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+    <!-- Filtros -->
+    <div class="card shadow-sm mb-4">
+      <div class="card-header bg-light">
+        <h6 class="mb-0">
+          <fa-icon [icon]="faFilter" class="me-2"></fa-icon>
+          Filtros e Ordenação
+        </h6>
+      </div>
+      <div class="card-body">
+        <div class="row g-3">
+          <div class="col-md-4">
+            <div class="input-group">
+              <span class="input-group-text">
+                <fa-icon [icon]="faSearch"></fa-icon>
+              </span>
+              <input type="text" 
+                     class="form-control" 
+                     placeholder="Buscar por título ou descrição..."
+                     [value]="filters().search"
+                     (input)="onSearchChange($event)">
+            </div>
+          </div>
+          
+          <div class="col-md-2">
+            <select class="form-select" 
+                    [value]="filters().status"
+                    (change)="onStatusChange($event)">
+              <option value="all">Todos os Status</option>
+              <option value="pending">Pendentes</option>
+              <option value="completed">Concluídas</option>
+            </select>
+          </div>
+          
+          <div class="col-md-2">
+            <select class="form-select" 
+                    [value]="filters().priority"
+                    (change)="onPriorityChange($event)">
+              <option value="all">Todas as Prioridades</option>
+              <option value="low">Baixa</option>
+              <option value="medium">Média</option>
+              <option value="high">Alta</option>
+            </select>
+          </div>
+          
+          <div class="col-md-2">
+            <div class="dropdown">
+              <button class="btn btn-outline-secondary dropdown-toggle w-100" 
+                      type="button" 
+                      data-bs-toggle="dropdown">
+                <fa-icon [icon]="getSortIcon('createdAt')" class="me-2"></fa-icon>
+                Ordenar
+              </button>
+              <ul class="dropdown-menu">
+                <li>
+                  <a class="dropdown-item" href="#" (click)="toggleSort('title'); $event.preventDefault()">
+                    <fa-icon [icon]="getSortIcon('title')" class="me-2"></fa-icon>
+                    Título
+                  </a>
+                </li>
+                <li>
+                  <a class="dropdown-item" href="#" (click)="toggleSort('createdAt'); $event.preventDefault()">
+                    <fa-icon [icon]="getSortIcon('createdAt')" class="me-2"></fa-icon>
+                    Data de Criação
+                  </a>
+                </li>
+                <li>
+                  <a class="dropdown-item" href="#" (click)="toggleSort('dueDate'); $event.preventDefault()">
+                    <fa-icon [icon]="getSortIcon('dueDate')" class="me-2"></fa-icon>
+                    Data de Vencimento
+                  </a>
+                </li>
+                <li>
+                  <a class="dropdown-item" href="#" (click)="toggleSort('priority'); $event.preventDefault()">
+                    <fa-icon [icon]="getSortIcon('priority')" class="me-2"></fa-icon>
+                    Prioridade
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </div>
+          
+          <div class="col-md-2">
+            <button class="btn btn-outline-danger w-100" (click)="clearFilters()">
+              Limpar Filtros
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+    <!-- Loading State -->
+    @if (loading()) {
+      <div class="text-center py-5">
+        <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;">
+          <span class="visually-hidden">Carregando...</span>
+        </div>
+        <p class="mt-3 text-muted">Carregando suas tarefas...</p>
+      </div>
+    }
+  
+    <!-- Error State -->
+    @if (error()) {
+      <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <fa-icon [icon]="faExclamationTriangle" class="me-2"></fa-icon>
+        {{ error() }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+      </div>
+    }
+  
+    <!-- Lista de Tarefas -->
+    @if (!loading() && sortedTasks().length > 0) {
+      <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+        @for (task of sortedTasks(); track task.id) {
+          <div class="col">
+            <div class="card h-100 shadow-sm hover-shadow border-start 
+                        {{ task.completed ? 'border-success border-start-4' : 'border-start-4' }} 
+                        {{ isOverdue(task) ? 'border-danger' : '' }}">
+              
+              <div class="card-body d-flex flex-column">
+                <!-- Cabeçalho da Tarefa -->
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                  <div class="flex-grow-1">
+                    <h5 class="card-title mb-1 
+                        {{ task.completed ? 'text-decoration-line-through text-muted' : '' }}">
+                      {{ task.title }}
+                    </h5>
+                    
+                    <!-- Tags -->
+                    <div class="d-flex gap-2 mt-2">
+                      <span class="badge {{ task.completed ? 'bg-success' : 'bg-warning' }}">
+                        {{ task.completed ? 'Concluída' : 'Pendente' }}
+                      </span>
+                      
+                      @if (task.priority) {
+                        <span class="badge {{ getPriorityClass(task.priority) }}">
+                          <fa-icon [icon]="getPriorityIcon(task.priority)" class="me-1"></fa-icon>
+                          {{ getPriorityText(task.priority) }}
+                        </span>
+                      }
+                      
+                      @if (isOverdue(task)) {
+                        <span class="badge bg-danger">
+                          <fa-icon [icon]="faClock" class="me-1"></fa-icon>
+                          Atrasada
+                        </span>
+                      }
+                    </div>
+                  </div>
+                  
+                  <!-- Menu de Ações -->
+                  <div class="dropdown">
+                    <button class="btn btn-sm btn-outline-secondary border-0" 
+                            type="button" 
+                            data-bs-toggle="dropdown">
+                      <fa-icon [icon]="faEdit"></fa-icon>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                      <li>
+                        <button class="dropdown-item" (click)="goToEditTask(task.id!)">
+                          <fa-icon [icon]="faEdit" class="me-2"></fa-icon>
+                          Editar
+                        </button>
+                      </li>
+                      <li>
+                        <button class="dropdown-item" (click)="toggleTaskCompletion(task)">
+                          <fa-icon [icon]="faCheck" class="me-2"></fa-icon>
+                          {{ task.completed ? 'Marcar como Pendente' : 'Marcar como Concluída' }}
+                        </button>
+                      </li>
+                      <li><hr class="dropdown-divider"></li>
+                      <li>
+                        <button class="dropdown-item text-danger" 
+                                (click)="confirmDeleteTask(task)">
+                          <fa-icon [icon]="faTrash" class="me-2"></fa-icon>
+                          Excluir
+                        </button>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+                
+                <!-- Descrição -->
+                @if (task.description) {
+                  <p class="card-text text-muted mb-4 flex-grow-1">
+                    {{ task.description.length > 150 ? task.description.substring(0, 150) + '...' : task.description }}
+                  </p>
+                }
+                
+                <!-- Datas -->
+                <div class="mt-auto">
+                  <div class="d-flex justify-content-between text-muted small">
+                    <div>
+                      <fa-icon [icon]="faCalendar" class="me-1"></fa-icon>
+                      Criada em {{ formatDate(task.createdAt) }}
+                    </div>
+                    
+                    @if (task.dueDate) {
+                      <div class="{{ isOverdue(task) && !task.completed ? 'text-danger fw-bold' : '' }}">
+                        <fa-icon [icon]="faClock" class="me-1"></fa-icon>
+                        Vence em {{ formatDate(task.dueDate) }}
+                      </div>
+                    }
+                  </div>
+                  
+                  <!-- Botões de Ação -->
+                  <div class="d-flex justify-content-between mt-3">
+                    <button class="btn btn-sm btn-outline-primary" 
+                            (click)="goToEditTask(task.id!)">
+                      <fa-icon [icon]="faEdit" class="me-1"></fa-icon>
+                      Editar
+                    </button>
+                    
+                    <div class="btn-group">
+                      @if (!task.completed) {
+                        <button class="btn btn-sm btn-success" 
+                                (click)="toggleTaskCompletion(task)">
+                          <fa-icon [icon]="faCheckCircle" class="me-1"></fa-icon>
+                          Concluir
+                        </button>
+                      }
+                      
+                      <button class="btn btn-sm btn-outline-danger" 
+                              (click)="confirmDeleteTask(task)">
+                        <fa-icon [icon]="faTrash" class="me-1"></fa-icon>
+                        Excluir
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    }
+  
+    <!-- Empty State -->
+    @if (!loading() && sortedTasks().length === 0) {
+      <div class="text-center py-5">
+        <div class="mb-4">
+          <fa-icon [icon]="faTasks" class="text-muted" style="font-size: 4rem;"></fa-icon>
+        </div>
+        <h3 class="text-muted mb-3">
+          {{ filters().search || filters().status !== 'all' || filters().priority !== 'all' 
+            ? 'Nenhuma tarefa encontrada' 
+            : 'Você ainda não tem tarefas' }}
+        </h3>
+        <p class="text-muted mb-4">
+          {{ filters().search || filters().status !== 'all' || filters().priority !== 'all' 
+            ? 'Tente ajustar seus filtros de busca' 
+            : 'Comece criando sua primeira tarefa!' }}
+        </p>
+        @if (!filters().search && filters().status === 'all' && filters().priority === 'all') {
+          <button class="btn btn-primary btn-lg" (click)="goToCreateTask()">
+            <fa-icon [icon]="faPlus" class="me-2"></fa-icon>
+            Criar Primeira Tarefa
+          </button>
+        } @else {
+          <button class="btn btn-outline-secondary" (click)="clearFilters()">
+            Limpar Filtros
+          </button>
+        }
+      </div>
+    }
+  </div>
+  
+  <!-- Modal de Confirmação de Exclusão -->
+  @if (showDeleteModal()) {
+    <div class="modal fade show d-block" tabindex="-1" style="background: rgba(0,0,0,0.5)">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header border-0">
+            <h5 class="modal-title text-danger">
+              <fa-icon [icon]="faExclamationTriangle" class="me-2"></fa-icon>
+              Confirmar Exclusão
+            </h5>
+            <button type="button" class="btn-close" (click)="closeDeleteModal()"></button>
+          </div>
+          <div class="modal-body">
+            <p>Tem certeza que deseja excluir a tarefa <strong>"{{ taskToDelete()?.title }}"</strong>?</p>
+            <p class="text-muted small">Esta ação não pode ser desfeita.</p>
+          </div>
+          <div class="modal-footer border-0">
+            <button type="button" class="btn btn-outline-secondary" (click)="closeDeleteModal()">
+              Cancelar
+            </button>
+            <button type="button" class="btn btn-danger" (click)="deleteTask()">
+              <fa-icon [icon]="faTrash" class="me-2"></fa-icon>
+              Excluir
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  }
