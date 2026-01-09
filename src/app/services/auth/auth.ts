@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, catchError, map, Observable, of, switchMap, tap, throwError } from 'rxjs';
 import { User } from '../../models/user.model';
 import { HttpClient } from '@angular/common/http';
+import { CryptoService } from '../crypto/crypto';
 
 @Injectable({
   providedIn: 'root',
@@ -11,7 +12,7 @@ export class Auth {
   currentUser$ = this.currentUserSubject.asObservable();
   private apiUrl = 'http://localhost:3000/users';
 
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient, private criptoService : CryptoService) {
     const storedUser = localStorage.getItem('currentUser');
     if (storedUser) {
       this.currentUserSubject.next(JSON.parse(storedUser));
@@ -23,7 +24,7 @@ export class Auth {
       .pipe(
         map(users => {
           const user = users[0];
-          if (user && user.password === password) {
+          if (user && this.criptoService.decrypt(user.password) === password) {
             localStorage.setItem('currentUser', JSON.stringify(user));
             this.currentUserSubject.next(user);
             return user;
@@ -43,7 +44,7 @@ export class Auth {
         }
         return user;
       }),
-    
+      
       switchMap(() => this.http.post<User>(this.apiUrl, {
         ...user,
         id: Date.now(), 

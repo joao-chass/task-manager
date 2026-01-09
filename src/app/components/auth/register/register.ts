@@ -18,6 +18,7 @@ import {
   faXmark
 } from '@fortawesome/free-solid-svg-icons';
 import { User } from '../../../models/user.model';
+import { CryptoService } from '../../../services/crypto/crypto';
 
 @Component({
   selector: 'app-register',
@@ -35,6 +36,7 @@ export class Register implements OnInit  {
 private fb = inject(FormBuilder);
 private authService = inject(Auth);
 private router = inject(Router);
+private cryptoService = inject(CryptoService);
 
 // Formulário
 registerForm: FormGroup;
@@ -161,7 +163,8 @@ onSubmit(): void {
     this.errorMessage.set('');
     this.successMessage = '';
     
-    const { name, email, password } = this.registerForm.value;
+    let { name, email, password } = this.registerForm.value;
+    password = this.cryptoService.encrypt(password);
     const userData: User = {
       name,
       email,
