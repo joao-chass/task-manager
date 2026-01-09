@@ -45,19 +45,17 @@ export class TaskList implements OnInit {
   private router = inject(Router);
   Math = Math;
   
-  // Computed properties do serviço
+
   tasks = computed(() => this.taskService.filteredTasks());
   loading = computed(() => this.taskService.loading());
   error = computed(() => this.taskService.error());
   filters = computed(() => this.taskService.filters());
-  
-  // Signals locais
+
   sortBy = signal<'title' | 'createdAt' | 'priority' | 'dueDate'>('createdAt');
   sortDirection = signal<'asc' | 'desc'>('desc');
   showDeleteModal = signal(false);
   taskToDelete = signal<Tasks | null>(null);
-  
-  // Ícones
+
   faTrash = faTrash;
   faEdit = faEdit;
   faCheck = faCheck;
@@ -76,10 +74,9 @@ export class TaskList implements OnInit {
   faSortUp = faSortUp;
   faSortDown = faSortDown;
   
-  // Computed properties
+
   userName = computed(() => this.authService.getCurrentUser()?.name || 'Usuário');
-  
-  // Tasks ordenadas
+
   sortedTasks = computed(() => {
     const tasks = this.tasks();
     const sortBy = this.sortBy();
@@ -121,10 +118,9 @@ export class TaskList implements OnInit {
   pendingTasks = computed(() => this.sortedTasks().filter(task => !task.completed).length);
   
   ngOnInit(): void {
-    // O serviço já carrega as tasks automaticamente
   }
   
-  // Métodos para filtros
+
   onSearchChange(event: Event): void {
     const value = (event.target as HTMLInputElement).value;
     this.taskService.updateFilters({ search: value });
@@ -144,7 +140,7 @@ export class TaskList implements OnInit {
     this.taskService.clearFilters();
   }
   
-  // Métodos para ordenação
+
   toggleSort(column: 'title' | 'createdAt' | 'priority' | 'dueDate'): void {
     if (this.sortBy() === column) {
       this.sortDirection.update(current => current === 'asc' ? 'desc' : 'asc');
@@ -159,7 +155,7 @@ export class TaskList implements OnInit {
     return this.sortDirection() === 'asc' ? faSortUp : faSortDown;
   }
   
-  // Métodos para tasks
+
   toggleTaskCompletion(task: Tasks): void {
     this.taskService.toggleTaskCompletion(task);
   }
@@ -245,7 +241,7 @@ export class TaskList implements OnInit {
     this.router.navigate(['/tasks/new']);
   }
   
-  goToEditTask(taskId: number): void {
+  goToEditTask(taskId: string): void {
     this.router.navigate(['/tasks/edit', taskId]);
   }
 }

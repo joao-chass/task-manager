@@ -37,22 +37,20 @@ export class Task {
 
     const currentUser = this.authService.getCurrentUser();
     if (currentUser?.id) {
-      filtered = filtered.filter(task => task.userId === currentUser.id);
+      filtered = filtered.filter(task => task.userId == currentUser.id);
     }
-    
-    // Filtrar por status
+
     if (filters.status === 'completed') {
       filtered = filtered.filter(task => task.completed);
     } else if (filters.status === 'pending') {
       filtered = filtered.filter(task => !task.completed);
     }
-    
-    // Filtrar por prioridade
+
     if (filters.priority && filters.priority !== 'all') {
       filtered = filtered.filter(task => task.priority === filters.priority);
     }
     
-    // Filtrar por busca
+  
     if (filters.search) {
       const searchTerm = filters.search.toLowerCase();
       filtered = filtered.filter(task =>
@@ -122,7 +120,7 @@ export class Task {
     ).subscribe();
   }
   
-  updateTask(id: number, task: Partial<Tasks>): void {
+  updateTask(id: string, task: Partial<Tasks>): void {
     this.loadingState.set(true);
     
     const updatedTask = {
@@ -145,8 +143,9 @@ export class Task {
       })
     ).subscribe();
   }
+
   
-  deleteTask(id: number): void {
+  deleteTask(id: string): void {
     this.loadingState.set(true);
     
     this.http.delete<void>(`${this.apiUrl}/${id}`).pipe(
@@ -166,6 +165,18 @@ export class Task {
   updateFilters(filters: Partial<TaskFilters>): void {
     this.filtersState.update(current => ({ ...current, ...filters }));
   }
+  getTaskById(id: string): Tasks | undefined {
+    return this.tasksState().find(task => task.id === id);
+  }
+
+  getTaskFromServer(id: string): Observable<Tasks> {
+    return this.http.get<Tasks>(`${this.apiUrl}/${id}`).pipe(
+      catchError(error => {
+        this.errorState.set('Erro ao carregar tarefa');
+        return throwError(() => error);
+      })
+    );
+  }
   
   clearFilters(): void {
     this.filtersState.set({
@@ -178,5 +189,10 @@ export class Task {
   toggleTaskCompletion(task: Tasks): void {
     const updatedTask = { ...task, completed: !task.completed };
     this.updateTask(task.id!, updatedTask);
+  }
+
+
+  clearError(): void {
+    this.errorState.set('');
   }
 }
